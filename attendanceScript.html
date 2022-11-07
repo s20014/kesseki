@@ -1,0 +1,13 @@
+<script>
+  google.script.run.withSuccessHandler(getInformation).getStudentInformation()
+  function getInformation(student) {
+    console.log(student)
+    const user = document.getElementById("user")
+    user.innerHTML = `
+    <p>学籍番号 ${student[0]}<p>
+    <p>${student[3]} ${student[5]}</p>
+    <p>${student[1]}
+    `
+  }
+
+</script>

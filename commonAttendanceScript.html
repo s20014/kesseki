@@ -1,0 +1,128 @@
+<script>
+
+  let student
+  let restReason
+　date()
+  google.script.run.withSuccessHandler(getUser).getStudentInformation()
+  google.script.run.withSuccessHandler(getReason).getRestReasonList()
+
+  function date() {
+    const date = new Date()
+    const yyyy = date.getFullYear();
+    const mm = ("0"+(date.getMonth()+1)).slice(-2);
+    const dd = ("0"+date.getDate()).slice(-2);
+    document.getElementById("startDate").value = yyyy + '-' + mm + '-' + dd;
+  }
+
+//　チェックボックス作成
+  function setDetailRadio() {
+    const cause = document.getElementById("firstCause")
+    const causeReason = document.getElementById("restReason")
+    const select = cause.radioCause.value
+    const list = restReason[select].slice(1).map(n =>{
+      return `<label><input type="checkbox" name="causeReason" value="${n}">${n}</label>`
+    })
+    causeReason.innerHTML = list.join("")
+  }
+
+//データを入れる　＆　理由のラジオ
+  function getReason(data) {
+    restReason = data
+    const farstCause = document.getElementById('firstCause')
+    const list = restReason.map((item, index) => {
+      return `<label><input type="radio" name="radioCause" value="${index}">${item[0]}</label>`
+    })
+    farstCause.innerHTML = list.join("")    
+  }
+
+  function changeStudentTime(data) {
+    const inputStudent = document.getElementById('studentTimeInput')
+    const idx = data.selectedIndex
+    const select = data.options[idx].value
+    const te = data.options[idx].text
+    if(select === "koma") {
+      inputStudent.innerHTML = `
+            <label><input type="checkbox" name="selectAbsent" value="１コマ" >１コマ</label>
+            <label><input type="checkbox" name="selectAbsent" value="２コマ" >２コマ</label>
+            <label><input type="checkbox" name="selectAbsent" value="３コマ" >３コマ</label>
+            <label><input type="checkbox" name="selectAbsent" value="４コマ" >４コマ</label>`
+    } else {
+      inputStudent.innerHTML = ""
+    }
+  }
+
+  function postData(or) {
+    if(or === "ad") {
+      google.script.run
+      .withSuccessHandler(inform())
+      .writesheet(createAdminUserData())
+    } else {
+      google.script.run
+      .withSuccessHandler(inform())
+      .writesheet(createUserData())
+    }
+    
+  }
+
+  function createAdminUserData() {
+    const userName = document.getElementById("from_typing_name").value
+    const userGrade = document.getElementById("gradeCheck").elements['from_select_grade'].value
+    const userDepartment = document.getElementById("departmentCheck").elements['from_select_department'].value
+    const userList = [userName, departmentList[userDepartment], `${userGrade}年`]
+    const kesseki = userList.concat(getCause())
+    return kesseki
+  }
+
+  function createUserData() {
+    const userList = [student[1], student[3], student[5]]
+    const kesseki = userList.concat(getCause())
+    return kesseki
+  }
+
+  function getCause() {
+    //選択されている理由。valueが数値
+    const causeValue = document.getElementById("firstCause").radioCause.value
+    let selectReason
+
+    const date = document.getElementById("startDate").value 
+    //遅刻or欠席or早退------------------------
+    const whyOption = document.getElementById("whyOption").be.value
+
+    //休む理由取得---------------------------
+    const cause = restReason[causeValue][0]
+
+    //症状取得----------------------------------------------
+    const causeReason = document.getElementById("restReason").causeReason
+    if(Array.from(causeReason).length > 0) {
+      selectReason = Array.from(causeReason).filter(n => n.checked).map(n => n.value)
+    } else {
+      if(causeReason.checked){
+        selectReason = [causeReason.value]
+      }
+    }
+    //----------------------------------------------------
+
+    //休む期間を取る。例：午前、午後、コマ別--------------------------//
+    const studentTime = document.getElementById("studentTime")
+    const idx = studentTime.selectedIndex                       
+    const select = studentTime.options[idx].text              
+    //----------------------------------------------------------
+    const koma = []
+    if(select === "コマ別"){
+      const selectList = Array.from(document.getElementsByName("selectAbsent"))
+      koma.push(selectList.filter(n => n.checked).map(n => n.value))
+    }
+    const causeText = document.getElementById("cause_text").value
+    return [date, select, koma.join(","), whyOption, cause, selectReason.join(","), causeText]
+  }
+
+  function getUser(stu) {
+    student = stu
+  }
+  
+
+  function inform() {
+    alert('スプレットシートに書き込んだなり')
+  }
+
+</script>

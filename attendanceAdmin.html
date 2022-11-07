@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <base target="_top">
+    <?!=HtmlService.createHtmlOutputFromFile('attendanceStyle').getContent();?>
+    <title>欠席入力フォーム</title>
+  </head>
+  <body>
+    <div id="myform">
+      <div id="checkUser">
+        <h2>From Select</h2>
+        <div id="from_select" class="from_select">
+          <div class="from_select flex_one" id="from_select_departments">
+            <form id="departmentCheck">
+              <label><input type="radio" name="from_select_department" onclick="changeSelectDepartment('s')" value="s">ITスペシャリスト科</label><br>
+              <label><input type="radio" name="from_select_department" onclick="changeSelectDepartment('n')" value="n" >サイバーセキュリティー科</label><br>
+              <label><input type="radio" name="from_select_department" onclick="changeSelectDepartment('c')" value="c">ゲームクリエイター科</label><br>
+              <label><input type="radio" name="from_select_department" onclick="changeSelectDepartment('e')" value="e">夜間ITエンジニア科</label><br>
+            </form>
+          </div>
+          <div class="from_select flex_one" id="from_select_grade">
+            <form id="gradeCheck">
+              <label><input type="radio" name="from_select_grade" onclick="changeSelectGrade(1)" value="1">1年</label><br>
+              <label><input type="radio" name="from_select_grade" onclick="changeSelectGrade(2)" value="2">2年</label><br>
+              <label><input type="radio" name="from_select_grade" onclick="changeSelectGrade(3)" value="3">3年</label><br>
+            </form>
+          </div>
+          <div class="from_select flex_one" id="from_select_name">
+            <select id="from_select_name_select" name="from_select_name" onchange="changeSelectName()"></select>
+          </div>
+        </div>
+        <h2>From typing</h2>
+        <div id="from_typing" class="from_typing">
+          <label>学籍番号から</label>
+          <input type="text" id="from_typing_number" list="from_typing_number_examples" onchange="changeTypingNumber()"><br>
+          <datalist id="from_typing_number_examples"></datalist>
+          <label>名前から</label>
+          <input type="text" id="from_typing_name" list="from_typing_name_examples" onchange="changeTypingName()"><br>
+          <datalist id="from_typing_name_examples"></datalist>
+          <label>ひらがなから</label>
+          <input type="text" id="from_typing_hiragana" list="from_typing_hiragana_examples" onchange="changeTypingHiragana()"><br>
+          <datalist id="from_typing_hiragana_examples"></datalist>
+        </div>
+      </div>
+<?!=HtmlService.createHtmlOutputFromFile('commonAttendance').getContent();?>
+      <input type="button" value="送信" onclick="postData('ad')">
+      <?!=HtmlService.createHtmlOutputFromFile('attendanceAdminScript').getContent();?>
+      <?!=HtmlService.createHtmlOutputFromFile('commonAttendanceScript').getContent();?>
+  </body>
+</html>

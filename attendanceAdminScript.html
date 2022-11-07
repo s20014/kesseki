@@ -1,0 +1,228 @@
+<script>
+
+  this.student_list = []
+  this.selectData = {
+    selectDepartment: null,
+    selectGrade: null,
+  }
+
+  const departmentList = {
+    's':'ITスペシャリスト科',
+    'n':'サイバーセキュリティ科',
+    'c':'ゲームクリエイター科',
+    'e':'夜間ITエンジニア科'
+  }
+
+  const selectName = document.getElementById("from_select_name_select")
+  const fromTypingNumber = document.getElementById("from_typing_number")
+  const fromTypingName = document.getElementById("from_typing_name")
+  const fromTypingHiragana = document.getElementById("from_typing_hiragana")
+  const selectDepartment = document.getElementsByName("from_select_department")
+  const selectGrade = document.getElementsByName("from_select_grade")
+
+  let tf = true
+
+  function changeSelectDepartment(value) {
+    this.selectData.selectDepartment = value
+    console.log(value)
+
+    setStudentList()
+  }
+
+    function changeSelectGrade(num) {
+    this.selectData.selectGrade = num
+    console.log(num)
+    setStudentList()
+  }
+
+  function setStudentList() {
+    let studentList = ""
+    const list = filterStudentList()
+    const department = this.selectData.selectDepartment
+    const grade = this.selectData.selectGrade
+
+    if(department && grade) {
+      list.forEach((item) => {
+      studentList = studentList + `<option value=${item[0]}>${item[1]}</option>`
+      })
+
+      studentList = "<option value=0 hidden>選択してください</option>" + studentList
+      selectName.innerHTML = studentList
+    }
+    console.log(tf)
+    if(tf)  setFirstTyping()
+    
+  }
+   
+  function filterStudentList() {
+    let showStudntList = [];
+    const studentNum = selectName.value
+    const department = this.selectData.selectDepartment
+    const grade = this.selectData.selectGrade
+    if (department && grade) {
+      const dep = departmentList[department]
+      let gra = `${grade}年`
+      
+      if(department === 'e' && grade !== 1) {
+        console.log('baka')
+        gra = "1年"
+        selectGrade[0].click()
+      } else if(department !== 's' && grade === 3) {
+        console.log('dame')
+        gra = "2年"
+        selectGrade[1].click()
+      }
+
+      if(department === 'e') {
+        selectGrade[1].disabled="disabled"
+        selectGrade[2].disabled="disabled"
+      } else if (department !== 's') {
+        selectGrade[2].disabled="disabled"
+        selectGrade[1].disabled=""
+      }else{
+        selectGrade.forEach(i => {i.disabled=""})
+      }
+      
+      showStudntList = this.student_list.filter(item => item[3] === dep && item[5] == gra)
+    
+    }
+
+    return showStudntList
+  }
+
+  function setFirstTyping() {
+    fromTypingNumber.value = ""
+    fromTypingName.value = ""
+    fromTypingHiragana.value = ""
+  }
+
+
+  function changeSelectName() {
+    let student_num = null
+    if (this.student_list.some((student, i) => {
+        student_num = i
+        return student[0] === selectName.value
+      })) {
+      const student = this.student_list[student_num]
+      fromTypingNumber.value = student[0]
+      fromTypingName.value = student[1]
+      fromTypingHiragana.value = student[2]
+    } else {
+      alert("そのような生徒はいません。")
+    }
+    
+  }
+
+  function changeTypingNumber() {
+    tf = false
+    let student_num = null
+    if (this.student_list.some((student, i) => {
+      student_num = i
+      return student[0] === fromTypingNumber.value
+    })) {
+      const student = this.student_list[student_num]
+      const grade = parseInt(student[5].substring(0,1)) - 1
+      selectGrade[grade].click()
+      const department = student[0].substring(0, 1)
+      const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+      selectDepartment[department_num].click()
+      fromTypingName.value = student[1]
+      fromTypingHiragana.value = student[2]
+      
+      selectName.value = student[0]
+      
+    }
+    tf = true
+  }
+
+  function changeTypingName() {
+    tf = false
+    console.log('changeName')
+    let student_num = null
+    let pickList = []
+
+    this.student_list.forEach((student, i) => {
+      if (student[1] === fromTypingName.value) {
+        pickList.push(student)
+      }
+    })
+   // console.log(pickList)
+    if (pickList.length === 1) {
+      const student = pickList[0]
+      fromTypingNumber.value = student[0]
+      fromTypingHiragana.value = student[2]
+      const grade = parseInt(student[5].substring(0,1)) - 1
+      selectGrade[grade].click()
+      const department = student[0].substring(0, 1)
+      const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+      selectDepartment[department_num].click()
+      selectName.value = student[0]
+    } else if (2 <= pickList.length){
+      let alertMessage = `${typingName}という学生が複数人います。\n\n`
+      pickList.forEach((student) => {
+        const grade = parseInt(student[5].substring(0,1)) - 1
+        const department = student[0].substring(0, 1)
+
+        const department_str = department === "s" ? "ITスペシャリスト科": department === "n" ? "サイバーセキュリティー科": department === "c" ? "ゲームクリエイター科" : "夜間エンジニア科"
+        alertMessage = alertMessage + `${department_str}${grade}年: ${student[0]}\n`
+      })
+      alert(alertMessage)
+      // ここでダイアログを使用するのがいいと思います。6/14のやらより。
+      // document.getElementsByName("from_select_grade")[0].checked = false
+    }
+    tf = true
+    
+  }
+
+  function changeTypingHiragana() {
+    tf = false
+    let pickList = []
+    this.student_list.forEach((student, i) => {
+      if (student[2] === fromTypingHiragana.value) {
+        pickList.push(student)
+      }
+    })
+     if (pickList.length === 1) {
+      const student = pickList[0]
+      fromTypingNumber.value = student[0]
+      fromTypingName.value = student[1]
+      const grade = parseInt(student[5].substring(0,1)) - 1
+      selectGrade[grade].click()
+      const department = student[0].substring(0, 1)
+      const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+      selectDepartment[department_num].click()
+      selectName.value = student[0]
+     }
+     tf = true
+  }   
+  
+  google.script.run.withSuccessHandler(successGetStudentList).getStudentData()
+
+  function successGetStudentList(student_list) {
+    console.log(student_list)
+    this.student_list = student_list
+    addExamples(student_list)
+  }
+
+  function addExamples(student_list) {
+    const fromNumberExamples = document.getElementById('from_typing_number_examples')
+    const fromNameExamples = document.getElementById('from_typing_name_examples')
+    const fromHiraganaExamples = document.getElementById('from_typing_hiragana_examples')
+    console.log(fromHiraganaExamples)
+
+    let fromNumberExamplesInnerHtml = "" // fromNumberExamples.innerHTML
+    let fromNameExamplesInnerHtml = "" // fromNameExamples.innerHTML
+    let fromHiraganaExamplesInnerHtml = ""
+
+    student_list.forEach((student) => {
+      fromNumberExamplesInnerHtml = fromNumberExamplesInnerHtml + `<option value="${student[0]}"></option>`
+      fromNameExamplesInnerHtml = fromNameExamplesInnerHtml + `<option value="${student[1]}"></option>`
+      fromHiraganaExamplesInnerHtml = fromHiraganaExamplesInnerHtml + `<option value="${student[2]}"></option>`
+    })
+
+    fromNumberExamples.innerHTML = fromNumberExamplesInnerHtml
+    fromNameExamples.innerHTML = fromNameExamplesInnerHtml
+    fromHiraganaExamples.innerHTML = fromHiraganaExamplesInnerHtml
+  }
+
+</script>

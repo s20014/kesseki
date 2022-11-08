@@ -1,12 +1,10 @@
 function writesheet(data) {
   const ss = SpreadsheetApp.openById("16laDl3T6GNt4OcZWqgYFMKkKrDmQ7nT94yoAUzbWfn4").getSheetByName('attendance')
   const toDay = getDate()
-  const user = [app.getExecuteUserId()]
-  const list = toDay.concat(data).concat(user)
+  const inf = app.getStudentInformation()
+  const student = [inf[1], inf[3], inf[5]]
+  const list = toDay.concat(student).concat(data)
   
-
-
-  console.log(toDay)
   ss.appendRow(list)
 }
 

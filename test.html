@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+  <h2>お問い合わせフォーム</h2>
+  <p>aaaaaaaaaaaaaaaa</p>
+  <form onsubmit="return false">
+    <div class="time flex_one">
+              <label>日付を指定</label>
+              <input type="date" name="startDate" id="startDate">
+            </div>
+    <div>
+      <label for="i_name">お名前</label>
+      <input id="i_name" type="text" name="name" value="" placeholder="山田 太郎" required>
+    </div>
+    <div>
+      <label for="i_furigana">フリガナ</label>
+      <input id="i_furigana" type="text" name="furigana" value="" placeholder="ヤマダ タロウ" required>
+    </div>
+    <div>
+      <label for="t_message">お問い合わせ内容</label>
+      <textarea id="t_message" name="message" placeholder="こちらにお問い合わせ内容を入力してください。" required></textarea>
+    </div>
+    <div class="btn_area">
+      <input type="submit" name="btn_confirm" value="入力内容を確認する">
+    </div>
+  </form>
+  </body>
+</html>

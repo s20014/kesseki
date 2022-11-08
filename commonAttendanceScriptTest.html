@@ -2,9 +2,12 @@
 
   let student
   let restReason
+  const form = document.getElementById("form_id")
+  const button = document.getElementById("button")
 　date()
   google.script.run.withSuccessHandler(getUser).getStudentInformation()
   google.script.run.withSuccessHandler(getReason).getRestReasonList()
+
 
   function date() {
     const date = new Date()
@@ -14,25 +17,28 @@
     document.getElementById("startDate").value = yyyy + '-' + mm + '-' + dd;
   }
 
-//　チェックボックス作成
-  function setDetailRadio() {
-    const cause = document.getElementById("firstCause")
-    const causeReason = document.getElementById("restReason")
-    const select = cause.radioCause.value
-    const list = restReason[select].slice(1).map(n =>{
-      return `<label><input type="checkbox" name="causeReason" value="${n}">${n}</label>`
-    })
-    causeReason.innerHTML = list.join("")
-  }
-
 //データを入れる　＆　理由のラジオ
   function getReason(data) {
     restReason = data
     const farstCause = document.getElementById('firstCause')
     const list = restReason.map((item, index) => {
-      return `<label><input type="radio" name="radioCause" value="${index}">${item[0]}</label>`
+      return `<label><input type="radio" name="radioCause" value="${index}" required >${item[0]}</label>`
     })
-    farstCause.innerHTML = list.join("")    
+    farstCause.innerHTML = list.join("")   
+
+    const radioCause = document.getElementsByName("radioCause")
+    const causeReason = document.getElementById("restReason")
+
+    radioCause.forEach(n => {
+      n.addEventListener("change", () => {   
+        const list = restReason[n.value].slice(1).map(i => {
+          return `<label><input type="checkbox" name="causeReason" value="${i}">${i}</label>`
+        })
+        causeReason.innerHTML = list.join("")
+      })
+    })
+    button.addEventListener("click", update)
+  
   }
 
   function changeStudentTime(data) {
@@ -53,18 +59,23 @@
 
   function getCause() {
     //選択されている理由。valueが数値
-    const causeValue = document.getElementById("firstCause").radioCause.value
+    const radioCause = document.getElementsByName("radioCause")
+    const causeValue = Array.from(radioCause).filter(n => n.checked)[0].value
+
     let selectReason
+    let selectWhyOption
 
     const date = document.getElementById("startDate").value 
     //遅刻or欠席or早退------------------------
-    const whyOption = document.getElementById("whyOption").be.value
+    const whyOption = document.getElementsByName("be")
+    selectWhyOption = Array.from(whyOption).filter(n => n.checked)[0].value
 
     //休む理由取得---------------------------
     const cause = restReason[causeValue][0]
+    console.log(cause)
 
     //症状取得----------------------------------------------
-    const causeReason = document.getElementById("restReason").causeReason
+    const causeReason = document.getElementsByName("causeReason")
     if(Array.from(causeReason).length > 0) {
       selectReason = Array.from(causeReason).filter(n => n.checked).map(n => n.value)
     } else {
@@ -72,6 +83,7 @@
         selectReason = [causeReason.value]
       }
     }
+    
     //----------------------------------------------------
 
     //休む期間を取る。例：午前、午後、コマ別--------------------------//
@@ -85,8 +97,10 @@
       koma.push(selectList.filter(n => n.checked).map(n => n.value))
     }
     const causeText = document.getElementById("cause_text").value
+    const returnData =  [date, select, koma.join(","), selectWhyOption, cause, selectReason.join(","), causeText]
+    console.log(returnData)
   
-    return [date, select, koma.join(","), whyOption, cause, selectReason.join(","), causeText]
+    return returnData
   }
 
   function getUser(stu) {
@@ -96,6 +110,13 @@
 
   function inform() {
     alert('スプレットシートに書き込んだなり')
+  }
+
+  function update() {
+    const isRequired = form.checkValidity()
+    if(isRequired) {
+      getCause()
+    }
   }
 
 

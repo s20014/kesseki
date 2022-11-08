@@ -225,4 +225,10 @@
     fromHiraganaExamples.innerHTML = fromHiraganaExamplesInnerHtml
   }
 
+  function postData() {
+    google.script.run
+    .withSuccessHandler(inform())
+    .writesheet(getCause())
+  }
+
 </script>

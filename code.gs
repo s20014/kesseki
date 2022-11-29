@@ -1,16 +1,31 @@
 function doGet(request) {
   let pages = request.parameter.page;
-  if(!pages) {
-    pages = 'attendance'
+  const login = app.getStudentInformation()
+
+  if(pages == "attendanceAdmin" && login[1] !== "ADMIN") {
+    pages = "test"
+
+  } else if(!pages && login[1] === "ADMIN") {
+    pages = "attendanceAdmin"
+
+  } else if(!pages && login[1] !== "ADMIN") {
+    pages = "attendance"
   }
   
-  const page1 = HtmlService.createTemplateFromFile(pages);
+  const page1 = HtmlService.createTemplateFromFile(pages)
 
   return page1.evaluate()
-              .setTitle('ITカレッジポータルサイト');
+              .setTitle('ITカレッジポータルサイト')
              // .setFaviconUrl();  
 }
 
 function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+  return HtmlService.createHtmlOutputFromFile(filename).getContent()
+}
+
+function getAppUrl() {
+  console.log(ScriptApp.getService().getUrl()
+)
+  return ScriptApp.getService().getUrl()
+
 }

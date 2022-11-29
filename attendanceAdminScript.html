@@ -98,6 +98,7 @@
 
 
   function changeSelectName() {
+    
     let student_num = null
     if (this.student_list.some((student, i) => {
         student_num = i
@@ -122,10 +123,13 @@
     })) {
       const student = this.student_list[student_num]
       const grade = parseInt(student[5].substring(0,1)) - 1
-      selectGrade[grade].click()
+     
       const department = student[0].substring(0, 1)
       const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+
       selectDepartment[department_num].click()
+      selectGrade[grade].click()
+      
       fromTypingName.value = student[1]
       fromTypingHiragana.value = student[2]
       
@@ -152,10 +156,12 @@
       fromTypingNumber.value = student[0]
       fromTypingHiragana.value = student[2]
       const grade = parseInt(student[5].substring(0,1)) - 1
-      selectGrade[grade].click()
       const department = student[0].substring(0, 1)
       const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+      
       selectDepartment[department_num].click()
+      selectGrade[grade].click()
+
       selectName.value = student[0]
     } else if (2 <= pickList.length){
       let alertMessage = `${typingName}という学生が複数人います。\n\n`
@@ -187,10 +193,12 @@
       fromTypingNumber.value = student[0]
       fromTypingName.value = student[1]
       const grade = parseInt(student[5].substring(0,1)) - 1
-      selectGrade[grade].click()
       const department = student[0].substring(0, 1)
       const department_num = department === "s" ? 0: department === "n" ? 1: department === "c" ? 2 : 3
+
       selectDepartment[department_num].click()
+      selectGrade[grade].click()
+
       selectName.value = student[0]
      }
      tf = true
@@ -226,9 +234,32 @@
   }
 
   function postData() {
-    google.script.run
-    .withSuccessHandler(inform())
-    .writesheet(getCause())
+    const data = getCause()
+    const student = selectName.value
+    button.disabled = true
+    if (student === "" || student === "0") {
+      alert("学生情報を入力してください。")
+      button.disabled = false
+    }else {
+      data.push(student)
+      google.script.run
+      .withSuccessHandler(inform)
+      .writesheet(data, "admin")
+
+    }
+
+    
+  }
+
+  function update() {
+    const isRequired = form.checkValidity()
+    const student = selectName.value
+    console.log(student)
+    if(isRequired) {
+      postData()
+    } else {
+      button.disabled = false
+    }
   }
 
 </script>

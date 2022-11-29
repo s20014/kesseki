@@ -11,10 +11,21 @@
   }
   function postData() {
     const data = getCause()
-    console.log(data)
-    // google.script.run
-    // .withSuccessHandler(inform())
-    // .writesheet(getCause())
+    google.script.run
+    .withSuccessHandler(inform)
+    .writesheet(data)
+  }
+
+  
+
+  function update() {
+    button.disabled = true
+    const isRequired = form.checkValidity()
+    if(isRequired) {
+      postData()
+    } else {
+      button.disabled = false
+    }
   }
 
 </script>

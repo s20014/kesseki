@@ -21,7 +21,7 @@
     restReason = data
     const farstCause = document.getElementById('firstCause')
     const list = restReason.map((item, index) => {
-      return `<label><input type="radio" name="radioCause" value="${index}" required >${item[0]}</label>`
+      return `<label><input type="radio" name="radioCause" value="${index}" required>${item[0]}</label>`
     })
     farstCause.innerHTML = list.join("")   
 
@@ -31,7 +31,7 @@
     radioCause.forEach(n => {
       n.addEventListener("change", () => {   
         const list = restReason[n.value].slice(1).map(i => {
-          return `<label><input type="checkbox" name="causeReason" value="${i}" >${i}</label>`
+          return `<label><input type="checkbox" name="causeReason" value="${i}">${i}</label>`
         })
         causeReason.innerHTML = list.join("")
       })
@@ -106,24 +106,12 @@
     student = stu
   }
 
-  async function inform(page) {
-
-    await getUrlAsync()
-    .then(value => {
-      console.log(value)
-      const url = `${value}?page=${page}`
-      window.open(url, "_top")
-    })
-    .catch(error => console.log(error.message))
+  function clickHome() {
+    const home = document.getElementById("click_home")
+    home.innerHTML = `<a class="home" href="https://www.google.com/?hl=ja">homeへ戻る</a>`
   }
 
-  function getUrlAsync() {
-    return new Promise(resolve => {
-      google.script.run
-      .withSuccessHandler(resolve)
-      .getAppUrl()
-    })
-  }
+
 
 
 </script>

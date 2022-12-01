@@ -243,7 +243,6 @@
     }else {
       data.push(student)
       google.script.run
-      .withSuccessHandler(inform)
       .writesheet(data, "admin")
 
     }
@@ -256,7 +255,9 @@
     const student = selectName.value
     console.log(student)
     if(isRequired) {
+      clickHome()
       postData()
+      alert("送信しました")
     } else {
       button.disabled = false
     }

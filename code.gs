@@ -24,8 +24,6 @@ function include(filename) {
 }
 
 function getAppUrl() {
-  console.log(ScriptApp.getService().getUrl()
-)
   return ScriptApp.getService().getUrl()
 
 }

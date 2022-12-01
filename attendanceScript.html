@@ -12,7 +12,6 @@
   function postData() {
     const data = getCause()
     google.script.run
-    .withSuccessHandler(inform)
     .writesheet(data)
   }
 
@@ -22,7 +21,10 @@
     button.disabled = true
     const isRequired = form.checkValidity()
     if(isRequired) {
+      clickHome()
       postData()
+      alert("送信しました")
+
     } else {
       button.disabled = false
     }

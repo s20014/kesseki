@@ -15,7 +15,6 @@ function writesheet(data, user = "student") {
     const student = [inf[0], inf[1], inf[3], inf[5]]
     list = toDay.concat(student).concat(item)
     //checkTime()
-    return 'ok'
 
   } else if(user == "student"&& item.length == 7 && checkData(data)) {
     inf = app.getStudentInformation()
@@ -24,8 +23,7 @@ function writesheet(data, user = "student") {
     item.push(newText)
     const student = [inf[0], inf[1], inf[3], inf[5]]
     list = toDay.concat(student).concat(item)
-    checkTime()
-    return 'ok'
+    //checkTime()
 
   } else {
     return 'test'
